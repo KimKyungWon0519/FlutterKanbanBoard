@@ -12,6 +12,11 @@ class ListItemProvider extends ChangeNotifier {
   Ref ref;
   TextEditingController newCardTextController = TextEditingController();
 
+  int previousItemIndex = -1;
+  int previousListIndex = -1;
+  int updateItemIndex = -1;
+  int updateListIndex = -1;
+
   void calculateCardPositionSize(
       {required int listIndex,
       required int itemIndex,
@@ -203,7 +208,7 @@ class ListItemProvider extends ChangeNotifier {
         prov.board.dragItemIndex = itemIndex;
         prov.board.dragItemOfListIndex = listIndex;
 
-        //  log("UPDATED | ITEM= ${prov.board.dragItemIndex} | LIST= $listIndex");
+        log("asdfasdf | ITEM= ${prov.board.dragItemIndex} | LIST= $listIndex");
         item.setState!();
       });
 
@@ -468,6 +473,9 @@ class ListItemProvider extends ChangeNotifier {
       required int itemIndex,
       required BuildContext context,
       required VoidCallback setsate}) {
+    previousItemIndex = itemIndex;
+    previousListIndex = listIndex;
+
     var prov = ref.read(ProviderList.boardProvider);
     final draggableProv = ref.read(ProviderList.draggableNotifier.notifier);
     var box = context.findRenderObject() as RenderBox;
@@ -546,6 +554,10 @@ class ListItemProvider extends ChangeNotifier {
     BoardList list =
         boardProv.board.lists[boardProv.board.dragItemOfListIndex!];
     ListItem card = list.items[boardProv.board.dragItemIndex!];
+
+    updateItemIndex = boardProv.board.dragItemIndex!;
+    updateListIndex = boardProv.board.dragItemOfListIndex!;
+
     card.child = card.prevChild;
 
     if (boardProv.draggedItemState!.listIndex ==
@@ -560,6 +572,8 @@ class ListItemProvider extends ChangeNotifier {
             boardProv.board.dragItemIndex! + 1,
             boardProv.board.lists[boardProv.draggedItemState!.listIndex!].items
                 .removeAt(boardProv.draggedItemState!.itemIndex!));
+
+        updateItemIndex = boardProv.board.dragItemIndex! + 1;
       } else {
         list.items.insert(
             boardProv.board.dragItemIndex!,
@@ -569,5 +583,11 @@ class ListItemProvider extends ChangeNotifier {
     }
 
     card.placeHolderAt = PlaceHolderAt.none;
+
+    // print('before : $previousListIndex $previousItemIndex ');
+    // print('update : $updateListIndex $updateItemIndex');
+
+    boardProv.board.onItemReorder?.call(
+        previousItemIndex, updateItemIndex, previousListIndex, updateListIndex);
   }
 }
