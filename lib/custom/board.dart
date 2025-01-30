@@ -242,6 +242,37 @@ class _BoardState extends ConsumerState<Board> {
   }
 
   @override
+  void didUpdateWidget(covariant Board oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    var boardProv = ref.read(ProviderList.boardProvider);
+    boardProv.initializeBoard(
+        data: widget.list,
+        boardScrollConfig: widget.boardScrollConfig,
+        listScrollConfig: widget.listScrollConfig,
+        displacementX: widget.displacementX,
+        displacementY: widget.displacementY,
+        backgroundColor: widget.backgroundColor,
+        boardDecoration: widget.boardDecoration,
+        cardPlaceHolderColor: widget.cardPlaceHolderColor,
+        listPlaceHolderColor: widget.listPlaceHolderColor,
+        listDecoration: widget.listDecoration,
+        textStyle: widget.textStyle,
+        onItemTap: widget.onItemTap,
+        onItemLongPress: widget.onItemLongPress,
+        onListTap: widget.onListTap,
+        onListLongPress: widget.onListLongPress,
+        onItemReorder: widget.onItemReorder,
+        onListReorder: widget.onListReorder,
+        onListRename: widget.onListRename,
+        onNewCardInsert: widget.onNewCardInsert,
+        cardTransitionBuilder: widget.cardTransitionBuilder,
+        listTransitionBuilder: widget.listTransitionBuilder,
+        cardTransitionDuration: widget.cardTransitionDuration,
+        listTransitionDuration: widget.listTransitionDuration);
+  }
+
+  @override
   Widget build(BuildContext context) {
     var boardProv = ref.read(ProviderList.boardProvider);
     var boardListProv = ref.read(ProviderList.boardListProvider);
@@ -257,6 +288,7 @@ class _BoardState extends ConsumerState<Board> {
           statusBarHeight +
           BOARD_PADDING; // statusbar
     });
+
     return Listener(
       onPointerUp: (event) {
         if (draggableProv.draggableType != DraggableType.none) {
